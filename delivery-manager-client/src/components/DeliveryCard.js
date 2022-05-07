@@ -1,25 +1,49 @@
 import React from "react";
+import axios from "axios";
 
-const DeliveryCard = ({ cardData }) => {
+/**
+ * Each card item within the list is made using this component.
+ */
+const DeliveryCard = ({ cardData, setData }) => {
   const [showInput, setShowInput] = React.useState(false);
   const [input, setInput] = React.useState(cardData.properties.notes);
   const handleEdit = () => {
-    console.log(`Edit button pressed for id: ${cardData.properties.id}.`);
     setShowInput(!showInput);
   };
 
-  const handleComplete = () => {
-    console.log(`Complete button pressed for id: ${cardData.properties.id}.`);
+  /**
+   * Makes API call to change delivered status value
+   */
+  const handleComplete = async () => {
+    await axios
+      .put(`/deliveries/${cardData.properties.id}`, {
+        delivered: true,
+      })
+      .then((res) => {
+        setData(res.data.features);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
   };
-
-  const handleInputSubmit = () => {
-    console.log(`Submit button pressed for id: ${cardData.properties.id}.`);
-    console.log(input);
-    setShowInput(!showInput);
+  /**
+   * Makes API call to change notes value
+   */
+  const handleInputSubmit = async () => {
+    await axios
+      .put(`/deliveries/${cardData.properties.id}`, {
+        notes: input,
+      })
+      .then((res) => {
+        setShowInput(!showInput);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
   };
 
   return (
-    <div className="flex flex-col gap-y-2">
+    <div className="flex flex-col gap-y-2 w-full">
       {/* Top row */}
       <div className="flex flex-row justify-between gap-x-4">
         {/* left side */}
@@ -34,6 +58,7 @@ const DeliveryCard = ({ cardData }) => {
           >
             Edit
           </button>
+          {/* If the current item is delivered, show 'completed', else show 'complete' button */}
           <button
             className="border px-3 py-1 rounded-md bg-green-600 text-white"
             onClick={handleComplete}
@@ -67,7 +92,7 @@ const DeliveryCard = ({ cardData }) => {
         </div>
         {/* right side */}
         <div>
-          <p>Distance: %DISTANCE% miles</p>
+          <p>Distance: {cardData.distance?.toFixed(2)} km</p>
         </div>
       </div>
     </div>

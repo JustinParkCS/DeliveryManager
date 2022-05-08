@@ -41,7 +41,7 @@ function App() {
   }, []);
 
   return (
-    <div className="relative flex justify-center items-center w-screen h-screen">
+    <div className="relative flex justify-center items-center">
       <Delivery currentPosition={currPosition} />
     </div>
   );

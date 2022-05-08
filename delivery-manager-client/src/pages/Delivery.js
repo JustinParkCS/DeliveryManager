@@ -48,8 +48,8 @@ const Delivery = ({ currentPosition }) => {
     newData.forEach((item) => {
       if (currentPosition.lat) {
         item["distance"] = distance(
-          item.geometry.coordinates[0],
           item.geometry.coordinates[1],
+          item.geometry.coordinates[0],
           currentPosition.lat,
           currentPosition.lon
         );
@@ -59,7 +59,10 @@ const Delivery = ({ currentPosition }) => {
     });
     // sorting data by distance
     newData.sort((a, b) => (a.distance > b.distance ? 1 : -1));
-    setModData(newData);
+    setModData(
+      // filtering to only grab un-delivered objects
+      newData.filter((dataObject) => !dataObject.properties.delivered)
+    );
   }, [currentPosition, data]);
 
   return (
